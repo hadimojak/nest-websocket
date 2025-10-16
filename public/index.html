@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Chat App - HTTP</title>
+  </head>
+  <body>
+    <h1>Chat App</h1>
+    <button type="button" onclick="fetchMsg()">fecth messages</button>
+    <div id="chat-box" style="border: 1px solid #ccc; height: 300px; overflow-y: auto">
+      <ul id="messages" style="list-style: none; padding: 0; margin: 0"></ul>
+    </div>
+    <input id="user" placeholder="Your name" />
+    <input id="text" placeholder="Message" />
+    <button onclick="sendMessage()">Send</button>
+
+    <script src="script.js"></script>
+  </body>
+</html>
