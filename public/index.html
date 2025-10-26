@@ -1,19 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Chat App - HTTP</title>
-  </head>
-  <body>
-    <h1>Chat App</h1>
-    <button type="button" onclick="fetchMsg()">fecth messages</button>
-    <div id="chat-box" style="border: 1px solid #ccc; height: 300px; overflow-y: auto">
-      <ul id="messages" style="list-style: none; padding: 0; margin: 0"></ul>
-    </div>
-    <input id="user" placeholder="Your name" />
-    <input id="text" placeholder="Message" />
-    <button onclick="sendMessage()">Send</button>
+<head>
+  <meta charset="UTF-8" />
+  <title>WebSocket Chat</title>
+</head>
+<body>
+  <h1>Simple Chat</h1>
+  <input id="name" placeholder="Enter your name" />
+  <button id="joinBtn">Join</button>
 
-    <script src="script.js"></script>
-  </body>
+  <div style="margin-top: 20px;">
+    <input id="to" placeholder="Send to (name)" />
+    <input id="message" placeholder="Message" />
+    <button id="sendBtn">Send</button>
+  </div>
+
+  <ul id="chat"></ul>
+
+  <script>
+    const ws = new WebSocket("ws://localhost:3000");
+    const chat = document.getElementById("chat");
+    const nameInput = document.getElementById("name");
+    const joinBtn = document.getElementById("joinBtn");
+    const toInput = document.getElementById("to");
+    const msgInput = document.getElementById("message");
+    const sendBtn = document.getElementById("sendBtn");
+
+    joinBtn.onclick = () => {
+      ws.send(JSON.stringify({ type: "set_name", data: { name: nameInput.value } }));
+    };
+
+    sendBtn.onclick = () => {
+      ws.send(JSON.stringify({
+        type: "send_message",
+        data: { to: toInput.value, message: msgInput.value },
+      }));
+    };
+
+    ws.onmessage = (event) => {
+      const { type, data } = JSON.parse(event.data);
+      if (type === "receive_message") {
+        const li = document.createElement("li");
+        li.textContent = `${data.from}: ${data.message}`;
+        chat.appendChild(li);
+      } else if (type === "error") {
+        alert(data);
+      }
+    };
+  </script>
+</body>
 </html>

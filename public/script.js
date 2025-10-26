@@ -1,18 +1,20 @@
-const userEl = document.getElementById("user");
-const testEl = document.getElementById("text");
-const chatBoxEl = document.getElementById("chat-box");
-
-const socket = new WebSocket("ws://localhost:3000");
-
-// socket.onopen = (event) => {
-//   console.log(event);
-// };
-
-socket.onmessage = (event) => {
-  console.log(event.data);
+const ws = new WebSocket("ws://localhost:3000");
+const log = (text) => {
+  const div = document.createElement("div");
+  div.textContent = text;
+  document.getElementById("messages").appendChild(div);
 };
 
-socket.onopen = () => {
-  socket.send("message from client to server");
+ws.onopen = () => log("✅ Connected");
+ws.onmessage = (event) => {
+  const { type, data } = JSON.parse(event.data);
+  if (type === "new message") log("💬 " + data);
 };
-      
+ws.onclose = () => log("🔴 Disconnected");
+
+document.getElementById("send").onclick = () => {
+  const msg = document.getElementById("msg").value;
+  ws.send(JSON.stringify({ type: "send message", data: msg }));
+  log("🧑 You: " + msg);
+  document.getElementById("msg").value = "";
+};
